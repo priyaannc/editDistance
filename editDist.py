@@ -1,9 +1,8 @@
-__author__ = 'user'
-from nltk.metrics import edit_distance
-
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-#  transposition flag allows transpositions edits (e.g., “ab” -> “ba”),
 
 tweet1 = 'What in the Republic of Gilead is going on here?! This is genocide. This is human trafficking.'
 tweet2 = 'At the start of the year, Andy Murray said farewell to the sport he adored.'
@@ -32,18 +31,25 @@ spam18 = 'Human insenstivity against genocide, watch http:///bit.ly/kmhg678'
 spam19 = 'petition against Gilead http:///bit.ly/jnhg678'
 spam20 = 'trafficked again,what are we doing to stop? take action http:///bit.ly/hshjh78'
 
-tweetlist = [tweet1,tweet2,tweet3,tweet4] 
+tweetlist = [tweet1,tweet2,tweet3,tweet4, tweet5] 
 spamlist = [spam1,spam2,spam3,spam4,spam5,spam6,
             spam7,spam8,spam9,spam10,spam11,spam12,spam13,spam14,spam15,spam16,
             spam17,spam18,spam19,spam20]
-ans =[]
-for i in range(0,len(tweetlist)):
- for j in range(0,len(spamlist)):
-    ans = edit_distance(tweetlist[i], spamlist[j], transpositions=False)    
-    print ('tweet-', i+1 ,'&', 'spam-',j+1,':', ans)
-    
 
 
 
-        
+data = {'tweets':[], 'spammers':[], 'score':[]}
 
+for tweet in tweetlist:
+    for spam in spamlist:
+        data['tweets'].append('tweet-{}'.format(tweetlist.index(tweet)+1))
+        data['spammers'].append('spam-{}'.format(spamlist.index(spam)+1))
+        data['score'].append(edit_distance(tweet, spam, transpositions=False))
+
+
+data = pd.DataFrame(data)
+
+plt.figure(figsize=(20,7))
+sns.lineplot(x="spammers", y="score", hue="tweets", data=data)
+plt.xticks(rotation=90)
+plt.show()
